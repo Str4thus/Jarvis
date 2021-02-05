@@ -24,7 +24,7 @@ if not args.subcommand:
 
 command_dict = {
 	"join": lambda : join.join(args.kind, args.box_name, args.release, args.sub_dir),
-	"config": lambda: config.config(args.key, args.value)
+	"config": lambda: config.config(args.key, args.value),
 }
 
 command_dict[args.subcommand]()
