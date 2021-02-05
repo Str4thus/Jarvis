@@ -18,9 +18,13 @@ def get_parser(sub_parsers: ArgumentParser) -> ArgumentParser:
 
 def join(kind: str, box_name: str, connect_to_release: bool = False, shall_be_empty: bool = False, sub_dir=None) -> None:
 	if kind == "thm" and connect_to_release:
-		print("WARNING: omitted --release flag. Connecting to THM")
+		print("WARNING: recheck --release flag. Connecting to THM")
 
-	vpn_path = Path(get_config_value(kind + "_vpn"))
+	if connect_to_release:
+		vpn_path = Path(get_config_value(kind + "_release_vpn"))
+	else:
+		vpn_path = Path(get_config_value(kind + "_vpn"))
+
 	cwd = Path(get_config_value(kind + "_dir")) / box_name
 	if sub_dir:
 		cwd /= sub_dir

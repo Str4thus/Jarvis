@@ -8,6 +8,7 @@ _CONFIG_FILE = Path.home() / ".jarvis.conf"
 
 _DEFAULT_CONFIG = {
 	"htb_vpn": "", # Path to HTB vpn
+	"htb_release_vpn": "", # Path to HTB release vpn
 	"thm_vpn": "", # Path to THM vpn
 	"htb_dir": "", # Path to HTB root dir
 	"thm_dir": "", # Path to THM root dir
