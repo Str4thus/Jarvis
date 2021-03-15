@@ -28,6 +28,7 @@ Possible Configurations:
 | htb_dir | Path | Path to the base directory of the HTB boxes | /root/htb/boxes |
 | thm_dir | Path | Path to the base directory of the THM rooms | /root/thm/rooms |
 | default_folders | List | List of the folders created upon initialization | nmap,gobuster,ssh |
+| pwnbooks_path | Path | Path to the folder of the pwnbooks.py script | /tools/pwnbooks |
 ---
 
 ### nmap
