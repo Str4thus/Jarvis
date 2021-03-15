@@ -13,6 +13,7 @@ _DEFAULT_CONFIG = {
 	"htb_dir": "", # Path to HTB root dir
 	"thm_dir": "", # Path to THM root dir
 	"default_folders": ["nmap", "gobuster"], # Default folders for initialization
+	"pwnbooks_path": "", # Path to the pwnbooks module
 }
 
 if not _CONFIG_FILE.is_file():
