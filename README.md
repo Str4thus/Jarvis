@@ -1,7 +1,7 @@
 # Jarvis
 
 
-## Modules
+## Base Modules
 
 ### config
 Allows configuration of Jarvis
@@ -38,5 +38,3 @@ Possible Configurations:
 ### gobuster
 
 ---
-
-### pwn
