@@ -31,6 +31,6 @@ subcommand = subcommand_args.pop("subcommand", None)
 
 if not subcommand:
 	parser.print_help()
-	exit()
+	exit(1)
 
 _MODULE_DICT[subcommand](**subcommand_args)
