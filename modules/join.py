@@ -1,5 +1,6 @@
 import os
 import time
+import tempfile
 from pathlib import Path
 from .config import get_config_value
 from argparse import ArgumentParser
@@ -13,9 +14,10 @@ def add_parser(sub_parsers: ArgumentParser) -> None:
 	join_parser.add_argument("--subdir", help="Subdirectory to create within the working directory (useful when a CTF consists of couple daily challenges)", dest="sub_dir", default=None)
 	join_parser.add_argument("--empty", help="Do not create default folders inside (nmap, gobuster, etc)", action="store_true", default=False)
 	join_parser.add_argument("--vpn", help="Specify a VPN to use", dest="vpn_path", default=None)
+	join_parser.add_argument("--tmp", help="Create the box directory in a temporary locaton", action="store_true", dest="is_temp", default=False)
 
 
-def main(kind: str, box_name: str, release: bool=False, empty: bool=False, sub_dir: str=None, vpn_path: str=None) -> None:
+def main(kind: str, box_name: str, release: bool=False, empty: bool=False, sub_dir: str=None, vpn_path: str=None, is_temp: bool=False) -> None:
 	if kind == "thm" and release:
 		print("WARNING: recheck --release flag. Connecting to THM")
 
@@ -25,11 +27,15 @@ def main(kind: str, box_name: str, release: bool=False, empty: bool=False, sub_d
 		else:
 			vpn_path = Path(get_config_value(kind + "_vpn"))
 
-	cwd = Path(get_config_value(kind + "_dir")) / box_name
-	if sub_dir:
-		cwd /= sub_dir
 
+	if is_temp:
+		cwd = Path(tempfile.gettempdir()) / box_name
+	else:
+		cwd = Path(get_config_value(kind + "_dir")) / box_name
+		if sub_dir:
+			cwd /= sub_dir
 
+	print(cwd)
 	_create_cwd_if_not_exist(cwd, empty)
 	_setup_tmux(cwd, vpn_path)
 
