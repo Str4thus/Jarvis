@@ -5,7 +5,7 @@ from .config import get_config_value
 from argparse import ArgumentParser
 
 
-def get_parser(sub_parsers: ArgumentParser) -> ArgumentParser:
+def add_parser(sub_parsers: ArgumentParser) -> None:
 	join_parser = sub_parsers.add_parser("join")
 	join_parser.add_argument("kind", help="Kind of CTF", choices=["htb", "thm"])
 	join_parser.add_argument("box_name", help="Name of the box/working directory")
@@ -13,14 +13,12 @@ def get_parser(sub_parsers: ArgumentParser) -> ArgumentParser:
 	join_parser.add_argument("--subdir", help="Subdirectory to create within the working directory (useful when a CTF consists of couple daily challenges)", dest="sub_dir", default=None)
 	join_parser.add_argument("--empty", help="Do not create default folders inside (nmap, gobuster, etc)", action="store_true", default=False)
 
-	return join_parser
 
-
-def join(kind: str, box_name: str, connect_to_release: bool = False, shall_be_empty: bool = False, sub_dir=None) -> None:
-	if kind == "thm" and connect_to_release:
+def main(kind: str, box_name: str, release: bool = False, empty: bool = False, sub_dir=None) -> None:
+	if kind == "thm" and release:
 		print("WARNING: recheck --release flag. Connecting to THM")
 
-	if connect_to_release:
+	if release:
 		vpn_path = Path(get_config_value(kind + "_release_vpn"))
 	else:
 		vpn_path = Path(get_config_value(kind + "_vpn"))
@@ -30,7 +28,7 @@ def join(kind: str, box_name: str, connect_to_release: bool = False, shall_be_em
 		cwd /= sub_dir
 
 
-	_create_cwd_if_not_exist(cwd, shall_be_empty)
+	_create_cwd_if_not_exist(cwd, empty)
 	_setup_tmux(cwd, vpn_path)
 
 

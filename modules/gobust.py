@@ -1,3 +1,4 @@
+"""
 jarvis.py gobust dir [dirb, seclists] [small,medium,large] <path> -p <port DEFAULT=80> [-x <ext>, --backups]
 jarvis.py gobust vhost [small, medium, large] [domain]
 
@@ -14,3 +15,13 @@ jarvis.py gobust dir dirb small php,ini
 jarvis.py gobust dir dirb large /api/v2/users -p 1337 -x php,html,txt
 jarvis.py gobust dir seclists large /api/v2/users --backups
 jarvis.py gobust vhost medium blue.htb
+"""
+
+def add_parser(sub_parsers) -> None:
+	gobust_parser = sub_parsers.add_parser("gobust")
+	gobust_parser.add_argument("test", help="test")
+	gobust_parser.add_argument("yeet", help="test")
+
+def main(test, yeet) -> None:
+	print("gobust!")
+	print(test, yeet)

@@ -3,7 +3,6 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 
-
 _CONFIG_FILE = Path.home() / ".jarvis.conf"
 
 _DEFAULT_CONFIG = {
@@ -26,13 +25,12 @@ with open(_CONFIG_FILE, "r") as config_file:
 
 
 
-def get_parser(sub_parsers: ArgumentParser) -> ArgumentParser:
+def add_parser(sub_parsers: ArgumentParser) -> None:
 	config_parser = sub_parsers.add_parser("config")
 	config_parser.add_argument("key", help="Configuration key", choices=_CONFIG.keys())
 	config_parser.add_argument("value", help="Value for the key")
-	return config_parser
 
-def config(key: str, value: str) -> None:
+def main(key: str, value: str) -> None:
 	if "," in value:
 		_CONFIG[key] = value.split(",")
 	else:

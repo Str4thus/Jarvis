@@ -1,30 +1,29 @@
 #!/usr/bin/python3
-# Examples:
-#
-# jarvis htb blue
-# jarvis htb laboratory --release
-# jarvis thm adventofcyber2 --subdir day4
 
+import os
 import argparse
-from modules import join
-from modules import config
+import importlib
+from inspect import signature 
 
+_MODULE_DICT = {}
 parser = argparse.ArgumentParser()
 sub_parsers = parser.add_subparsers(dest="subcommand")
 
-join_parser = join.get_parser(sub_parsers)
-config_parser = config.get_parser(sub_parsers)
+# import modules and link parsers
+for module_file in os.listdir("modules"):
+	if ".py" not in module_file:
+		continue
+	module_name = module_file.split(".")[0]
+	module = importlib.import_module("modules." + module_name)
+	module.add_parser(sub_parsers)
+	_MODULE_DICT[module_name] = module.main
 
 
-args = parser.parse_args()
+subcommand_args = dict(vars(parser.parse_args()))
+subcommand = subcommand_args.pop("subcommand", None)
 
-if not args.subcommand:
+if not subcommand:
 	parser.print_help()
 	exit()
 
-command_dict = {
-	"join": lambda : join.join(args.kind, args.box_name, args.release, args.sub_dir),
-	"config": lambda: config.config(args.key, args.value),
-}
-
-command_dict[args.subcommand]()
+_MODULE_DICT[subcommand](**subcommand_args)
