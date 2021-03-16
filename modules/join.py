@@ -12,16 +12,18 @@ def add_parser(sub_parsers: ArgumentParser) -> None:
 	join_parser.add_argument("--release", help="Connects to the release arena on HTB", action="store_true", default=False)
 	join_parser.add_argument("--subdir", help="Subdirectory to create within the working directory (useful when a CTF consists of couple daily challenges)", dest="sub_dir", default=None)
 	join_parser.add_argument("--empty", help="Do not create default folders inside (nmap, gobuster, etc)", action="store_true", default=False)
+	join_parser.add_argument("--vpn", help="Specify a VPN to use", dest="vpn_path", default=None)
 
 
-def main(kind: str, box_name: str, release: bool = False, empty: bool = False, sub_dir=None) -> None:
+def main(kind: str, box_name: str, release: bool=False, empty: bool=False, sub_dir: str=None, vpn_path: str=None) -> None:
 	if kind == "thm" and release:
 		print("WARNING: recheck --release flag. Connecting to THM")
 
-	if release:
-		vpn_path = Path(get_config_value(kind + "_release_vpn"))
-	else:
-		vpn_path = Path(get_config_value(kind + "_vpn"))
+	if not vpn_path:
+		if release:
+			vpn_path = Path(get_config_value(kind + "_release_vpn"))
+		else:
+			vpn_path = Path(get_config_value(kind + "_vpn"))
 
 	cwd = Path(get_config_value(kind + "_dir")) / box_name
 	if sub_dir:
