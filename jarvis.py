@@ -16,7 +16,7 @@ sub_parsers = parser.add_subparsers(dest="subcommand")
 
 # import modules and link parsers
 modules_path = get_script_path() / "modules"
-print(modules_path)
+
 for module_file in os.listdir(modules_path):
 	if ".py" not in module_file:
 		continue

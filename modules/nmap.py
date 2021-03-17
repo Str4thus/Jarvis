@@ -19,7 +19,6 @@ def add_parser(sub_parsers: ArgumentParser) -> None:
 
 def main(mode: str, target: str, output_dir: str):
 	output_dir = Path(output_dir)
-	print(output_dir)
 	if mode == "default":
 		_default_nmap_scan(target, output_dir)
 	elif mode == "fast":
