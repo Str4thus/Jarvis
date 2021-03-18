@@ -28,6 +28,7 @@ def main(key: str, value: str) -> None:
 		print("There is currently no active session!")
 
 def init_session(box_dir, box_name, vpn_path, lab_name, target=None, lhost=None, lport=None):
+	print(_SESSION_DATA)
 	if get_brain_value("active"):
 		print("A session is already active! Please exit it first before creating a new one!")
 		exit(1)
@@ -47,8 +48,10 @@ def init_session(box_dir, box_name, vpn_path, lab_name, target=None, lhost=None,
 def exit_session() -> None:
 	if not get_brain_value("active"):
 		print("There is currently no active session!")
+		exit(1)
 
 	if _BRAIN_FILE.is_file():
+		print("remove file")
 		_BRAIN_FILE.unlink()
 		print("Exited session!")
 

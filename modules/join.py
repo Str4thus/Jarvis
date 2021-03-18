@@ -15,7 +15,7 @@ def add_parser(sub_parsers: ArgumentParser) -> None:
 	join_parser.add_argument("--subdir", help="Subdirectory to create within the working directory (useful when a CTF consists of couple daily challenges)", dest="sub_dir", default=None)
 	join_parser.add_argument("--empty", help="Do not create default folders inside (nmap, gobuster, etc)", action="store_true", default=False)
 	join_parser.add_argument("--vpn", help="Specify a VPN to use", dest="vpn_path", default=None)
-	join_parser.add_argument("--tmp", help="Create the box directory in a temporary locaton", action="store_true", dest="is_temp", default=False)
+	join_parser.add_argument("--tmp, --temp", help="Create the box directory in a temporary locaton", action="store_true", dest="is_temp", default=False)
 	join_parser.add_argument("--target", help="Specify the target's ip", default=None)
 	join_parser.add_argument("--lhost", help="Specify lhost value", default=None)
 	join_parser.add_argument("--lport", help="Specify lport value", type=int, default=None)
