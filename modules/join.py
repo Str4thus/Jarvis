@@ -3,6 +3,7 @@ import time
 import tempfile
 from pathlib import Path
 from .config import get_config_value
+from .brain import init_session, exit_session
 from argparse import ArgumentParser
 
 
@@ -15,9 +16,13 @@ def add_parser(sub_parsers: ArgumentParser) -> None:
 	join_parser.add_argument("--empty", help="Do not create default folders inside (nmap, gobuster, etc)", action="store_true", default=False)
 	join_parser.add_argument("--vpn", help="Specify a VPN to use", dest="vpn_path", default=None)
 	join_parser.add_argument("--tmp", help="Create the box directory in a temporary locaton", action="store_true", dest="is_temp", default=False)
+	join_parser.add_argument("--target", help="Specify the target's ip", default=None)
+	join_parser.add_argument("--lhost", help="Specify lhost value", default=None)
+	join_parser.add_argument("--lport", help="Specify lport value", type=int, default=None)
 
 
-def main(lab: str, box_name: str, release: bool=False, empty: bool=False, sub_dir: str=None, vpn_path: str=None, is_temp: bool=False) -> None:
+def main(lab: str, box_name: str, release: bool=False, empty: bool=False, sub_dir: str=None, vpn_path: str=None, is_temp: bool=False,
+	target: str=None, lhost: str=None, lport: int=None) -> None:
 	if not (get_config_value(lab + "_vpn") or vpn_path) and not (get_config_value(lab + "_dir") or is_temp):
 		print("Unrecognized lab! You can specify --vpn <vpn_path> and --tmp or add a new kind via 'jarvis.py labs add <lab_name>''")
 		exit(1)
@@ -35,6 +40,9 @@ def main(lab: str, box_name: str, release: bool=False, empty: bool=False, sub_di
 		cwd = Path(get_config_value(lab + "_dir")) / box_name
 		if sub_dir:
 			cwd /= sub_dir
+
+	init_session(box_name=box_name, box_dir=cwd, vpn_path=vpn_path,
+		lab_name=lab, target=target, lhost=lhost, lport=lport)
 
 	_create_cwd_if_not_exists(cwd, empty)
 	_setup_tmux(cwd, vpn_path)
