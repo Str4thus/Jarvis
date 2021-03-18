@@ -20,8 +20,6 @@ jarvis.py gobust vhost medium blue.htb
 def add_parser(sub_parsers) -> None:
 	gobust_parser = sub_parsers.add_parser("gobust")
 	gobust_parser.add_argument("test", help="test")
-	gobust_parser.add_argument("yeet", help="test")
 
-def main(test, yeet) -> None:
-	print("gobust!")
-	print(test, yeet)
+def main(test) -> None:
+	print(test)

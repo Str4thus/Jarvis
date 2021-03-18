@@ -65,6 +65,5 @@ def get_brain_value(key: str) -> Union[str, None]:
 
 
 def _save() -> None:
-	print(_SESSION_DATA)
 	with open(_BRAIN_FILE, "w") as brain_file:
 		json.dump(_SESSION_DATA, brain_file, indent=4)
