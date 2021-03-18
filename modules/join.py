@@ -3,7 +3,7 @@ import time
 import tempfile
 from pathlib import Path
 from .config import get_config_value
-from .brain import init_session, exit_session
+from .brain import init_session
 from argparse import ArgumentParser
 
 
