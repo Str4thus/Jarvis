@@ -7,23 +7,27 @@ import importlib
 from pathlib import Path
 
 
-def get_script_path():
-    return Path(os.path.dirname(os.path.realpath(sys.argv[0])))
-
 _MODULE_DICT = {}
 parser = argparse.ArgumentParser()
 sub_parsers = parser.add_subparsers(dest="subcommand")
 
-# import modules and link parsers
-modules_path = get_script_path() / "modules"
+def get_script_path():
+    return Path(os.path.dirname(os.path.realpath(sys.argv[0])))
 
-for module_file in os.listdir(modules_path):
-	if ".py" not in module_file:
-		continue
-	module_name = module_file.split(".")[0]
-	module = importlib.import_module(f"modules.{module_name}", package=modules_path)
-	module.add_parser(sub_parsers)
-	_MODULE_DICT[module_name] = module.main
+def import_modules(folder: str):
+	module_dir = get_script_path() / folder
+	for module_file in os.listdir(module_dir):
+		if ".py" not in module_file:
+			continue
+		module_name = module_file.split(".")[0]
+		module = importlib.import_module(f"{folder}.{module_name}")
+		module.add_parser(sub_parsers)
+		_MODULE_DICT[module_name] = module.main
+
+
+# import modules and link parsers
+import_modules("core")
+import_modules("modules")
 
 
 subcommand_args = dict(vars(parser.parse_args()))

@@ -10,7 +10,7 @@ nmap fast (nmap -p- -vvv -oN nmap/fast.nmap -oX nmap/fast.xml <ip>)
 import os
 from pathlib import Path
 from argparse import ArgumentParser
-from .brain import get_brain_value
+from core.brain import get_brain_value
 
 def add_parser(sub_parsers: ArgumentParser) -> None:
 	nmap_parser = sub_parsers.add_parser("nmap")
