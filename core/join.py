@@ -59,16 +59,7 @@ def _create_cwd_if_not_exists(cwd: Path, shall_be_empty: bool) -> None:
 		if not shall_be_empty:
 			for folder in get_config_value("default_folders"):
 				os.mkdir(cwd / folder)
-
-
-def _get_ip_address(ifname):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return socket.inet_ntoa(fcntl.ioctl(
-        s.fileno(),
-        0x8915,  # SIOCGIFADDR
-        struct.pack('256s', bytes(ifname[:15], 'utf-8'))
-    )[20:24])
-
+				
 
 def _setup_tmux(cwd: Path, vpn_path: Path) -> None:
 	os.system("tmux new-session -d -c {} -s Jarvis".format(cwd))
