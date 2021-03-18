@@ -1,6 +1,9 @@
 import os
 import time
 import tempfile
+import socket
+import fcntl
+import struct
 from pathlib import Path
 from .config import get_config_value
 from .brain import init_session
@@ -16,9 +19,9 @@ def add_parser(sub_parsers: ArgumentParser) -> None:
 	join_parser.add_argument("--empty", help="Do not create default folders inside (nmap, gobuster, etc)", action="store_true", default=False)
 	join_parser.add_argument("--vpn", help="Specify a VPN to use", dest="vpn_path", default=None)
 	join_parser.add_argument("--tmp, --temp", help="Create the box directory in a temporary locaton", action="store_true", dest="is_temp", default=False)
-	join_parser.add_argument("--target", help="Specify the target's ip", default=None)
+	join_parser.add_argument("-t", "--target", help="Specify the target's ip", default=None)
 	join_parser.add_argument("--lhost", help="Specify lhost value", default=None)
-	join_parser.add_argument("--lport", help="Specify lport value", type=int, default=None)
+	join_parser.add_argument("--lport", help="Specify lport value", type=int, default=31337)
 
 
 def main(lab: str, box_name: str, release: bool=False, empty: bool=False, sub_dir: str=None, vpn_path: str=None, is_temp: bool=False,
@@ -41,12 +44,13 @@ def main(lab: str, box_name: str, release: bool=False, empty: bool=False, sub_di
 		if sub_dir:
 			cwd /= sub_dir
 
+
 	init_session(box_name=box_name, box_dir=cwd, vpn_path=vpn_path,
 		lab_name=lab, target=target, lhost=lhost, lport=lport)
 
 	_create_cwd_if_not_exists(cwd, empty)
 	_setup_tmux(cwd, vpn_path)
-
+	_attach_to_tmux(cwd)
 
 def _create_cwd_if_not_exists(cwd: Path, shall_be_empty: bool) -> None:
 	if not os.path.exists(cwd):
@@ -57,8 +61,20 @@ def _create_cwd_if_not_exists(cwd: Path, shall_be_empty: bool) -> None:
 				os.mkdir(cwd / folder)
 
 
+def _get_ip_address(ifname):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', bytes(ifname[:15], 'utf-8'))
+    )[20:24])
+
+
 def _setup_tmux(cwd: Path, vpn_path: Path) -> None:
 	os.system("tmux new-session -d -c {} -s Jarvis".format(cwd))
-	os.system("tmux new-window -t Jarvis -c {}".format(cwd))
 	os.system("tmux send -t Jarvis:0 'openvpn {}' C-m".format(vpn_path))
+	time.sleep(0.1)
+	os.system("tmux new-window -t Jarvis -c {}".format(cwd))
+
+def _attach_to_tmux(cwd: Path) -> None:
 	os.system("tmux at -t Jarvis -c {}".format(cwd))

@@ -1,3 +1,4 @@
+import os
 import tempfile
 import json
 from argparse import ArgumentParser
@@ -40,9 +41,7 @@ def init_session(box_dir, box_name, vpn_path, lab_name, target=None, lhost=None,
 	set_brain_value("target", target)
 	set_brain_value("lhost", lhost)
 	set_brain_value("lport", lport)
-	_save()
 
-	print("Started new session!")
 
 def exit_session() -> None:
 	if not get_brain_value("active"):
@@ -50,14 +49,17 @@ def exit_session() -> None:
 		exit(1)
 
 	if _BRAIN_FILE.is_file():
-		print("remove file")
 		_BRAIN_FILE.unlink()
-		print("Exited session!")
 
 
 def set_brain_value(key: str, value) -> None:
 	_SESSION_DATA[key] = value
 	_save()
+
+	if key == "target":
+		os.environ["target"] = value
+	elif key == "box_dir":
+		os.environ["boxdir"] = value
 
 def get_brain_value(key: str) -> Union[str, None]:
 		try:
