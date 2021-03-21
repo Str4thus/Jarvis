@@ -57,9 +57,9 @@ def set_brain_value(key: str, value) -> None:
 	_save()
 
 	if key == "target":
-		os.environ["target"] = value
+		os.environ["target"] = value or ""
 	elif key == "box_dir":
-		os.environ["boxdir"] = value
+		os.environ["boxdir"] = value or ""
 
 def get_brain_value(key: str) -> Union[str, None]:
 		try:
