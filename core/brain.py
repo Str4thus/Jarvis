@@ -19,12 +19,22 @@ if _BRAIN_FILE.is_file():
 
 def add_parser(sub_parsers: ArgumentParser) -> None:
 	brain_parser = sub_parsers.add_parser("brain")
-	brain_parser.add_argument("key", help="Brain Attribute", choices=["lhost", "lport", "target"])
-	brain_parser.add_argument("value", help="Value for the attribute")
+	brain_parser.add_argument("key", help="Brain Attribute", nargs="?", choices=["lhost", "lport", "target"], default=None)
+	brain_parser.add_argument("value", help="Value for the attribute", nargs="?", default=None)
 
-def main(key: str, value: str) -> None:
+def main(key: str=None, value: str=None) -> None:
 	if get_brain_value("active"):
-		set_brain_value(key, value)
+		if not key and not value:
+			for key in _SESSION_DATA.keys():
+				print(f"{key}: {_SESSION_DATA[key]}")
+
+		elif key and not value:
+			print(f"Please specify a value for '{key}'")
+			exit(0)
+
+		elif key and value:
+			set_brain_value(key, value)
+
 	else:
 		print("There is currently no active session!")
 
@@ -66,7 +76,6 @@ def get_brain_value(key: str) -> Union[str, None]:
 			return _SESSION_DATA[key]
 		except KeyError:
 			return None
-
 
 def _save() -> None:
 	with open(_BRAIN_FILE, "w") as brain_file:
