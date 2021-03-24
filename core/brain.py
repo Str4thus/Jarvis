@@ -25,12 +25,11 @@ def add_parser(sub_parsers: ArgumentParser) -> None:
 def main(key: str=None, value: str=None) -> None:
 	if get_brain_value("active"):
 		if not key and not value:
-			for key in _SESSION_DATA.keys():
-				print(f"{key}: {_SESSION_DATA[key]}")
+			for attribute in _SESSION_DATA.keys():
+				print(f"{attribute}: {get_brain_value(attribute)}")
 
 		elif key and not value:
-			print(f"Please specify a value for '{key}'")
-			exit(0)
+			print(get_brain_value(key))
 
 		elif key and value:
 			set_brain_value(key, value)
