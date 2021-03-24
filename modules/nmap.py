@@ -1,4 +1,5 @@
 import os
+import time
 from pathlib import Path
 from argparse import ArgumentParser
 from core.brain import get_brain_value
@@ -31,10 +32,20 @@ def main(mode: str, target: str=None, output_dir: str=None) -> None:
 
 
 def _default_nmap_scan(target: str, output_dir: str) -> None:
-	os.system(f"nmap -sC -sV -p- -vvv -A -oN {output_dir}/default.nmap {target}")
+	_scan(f"nmap -sC -sV -p- -vvv -A {target}", output_dir, "default.nmap")
 
 def _fast_nmap_scan(target: str, output_dir: Path) -> None:
-	os.system(f"nmap -p- -vvv -oN {output_dir}/fast.nmap {target}")
+	_scan(f"nmap -p- -vvv {target}", output_dir, "fast.nmap")
 
 def _udp_nmap_scan(target: str, output_dir: Path) -> None:
-	os.system(f"nmap -sU -p- -vvv -oN {output_dir}/udp.nmap {target}")
+	_scan(f"nmap -sU -p- -vvv {target}", output_dir, "upd.nmap")
+
+
+def _scan(command, output_dir, filename):
+	if os.path.isdir(output_dir):
+		os.system(command + f"-oN {output_dir}/{filename}")
+		return
+
+	print("WARNING: Jarvis won't log this nmap scan. Please create a directory called 'nmap' in the box directory to fix this.")
+	time.sleep(3)
+	os.system(command)
