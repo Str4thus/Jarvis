@@ -12,7 +12,7 @@ def add_parser(sub_parsers: ArgumentParser) -> None:
 	default_nmap_dir = str(Path(get_brain_value("box_dir")) / "nmap") if get_brain_value("box_dir") else None
 	nmap_parser.add_argument("-o --output", help="Output directory (default is ./nmap)", dest="output_dir", default=default_nmap_dir)
 
-def main(mode: str, target: str, output_dir: str):
+def main(mode: str, target: str=None, output_dir: str=None) -> None:
 	if not get_brain_value("active"):
 		print("This module is only available in a valid session!")
 		exit(1)
@@ -30,11 +30,11 @@ def main(mode: str, target: str, output_dir: str):
 		_udp_nmap_scan(target, output_dir)
 
 
-def _default_nmap_scan(target: str, output_dir: Path) -> None:
-	os.system(f"nmap -sC -sV -p- -vvv -A -oN {str(output_dir)}/default.nmap {target}")
+def _default_nmap_scan(target: str, output_dir: str) -> None:
+	os.system(f"nmap -sC -sV -p- -vvv -A -oN {output_dir}/default.nmap {target}")
 
 def _fast_nmap_scan(target: str, output_dir: Path) -> None:
-	os.system(f"nmap -p- -vvv -oN {str(output_dir)}/fast.nmap {target}")
+	os.system(f"nmap -p- -vvv -oN {output_dir}/fast.nmap {target}")
 
 def _udp_nmap_scan(target: str, output_dir: Path) -> None:
-	os.system(f"nmap -sU -p- -vvv -oN {str(output_dir)}/udp.nmap {target}")
+	os.system(f"nmap -sU -p- -vvv -oN {output_dir}/udp.nmap {target}")
