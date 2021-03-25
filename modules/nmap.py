@@ -46,6 +46,6 @@ def _scan(command, output_dir, filename):
 		os.system(command + f"-oN {output_dir}/{filename}")
 		return
 
-	print("WARNING: Jarvis won't log this nmap scan. Please create a directory called 'nmap' in the box directory to fix this.")
+	print(f"WARNING: Jarvis won't log this nmap scan. Please create {output_dir} to fix this.")
 	time.sleep(3)
 	os.system(command)

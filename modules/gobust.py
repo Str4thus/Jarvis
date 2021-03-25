@@ -37,7 +37,8 @@ def add_parser(sub_parsers) -> None:
 	gobust_parser.add_argument("-o --output", help="Output directory (default is ./gobust)", dest="output_dir", default=default_gobust_dir)
 
 
-def main(wordlist_size: str, url_path: str="/", target_ip: str=None, port: int=80, use_ssl: bool=False, extensions: str="", check_backups: bool=False, output_dir: str=None) -> None:
+def main(wordlist_size: str, url_path: str="/", target_ip: str=None, port: int=80, 
+		use_ssl: bool=False, extensions: str="", check_backups: bool=False, output_dir: str=None) -> None:
 	if not get_brain_value("active"):
 		print("This module is only available in a valid session!")
 		exit(1)
@@ -65,7 +66,7 @@ def _gobust(url_path: str, wordlist_size: str, target_ip: str, port: int, use_ss
 	if os.path.isdir(output_dir):
 		output_dir_flag = f"-o {output_dir}/{port}{url_path.replace('/','-') if len(url_path) > 1 else '-root'}.gobust"
 	else:
-		print("WARNING: Jarvis won't log this gobust. Please create a directory called 'gobust' in the box directory to fix this.")
+		print(f"WARNING: Jarvis won't log this gobust. Please create {output_dir} to fix this.")
 		time.sleep(3)
 	
 	os.system(f"gobuster dir -u {full_url} -w /usr/share/seclists/Discovery/Web-Content/raft-{wordlist_size}-words.txt {extensions_flag} {output_dir_flag}")
