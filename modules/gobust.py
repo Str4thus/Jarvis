@@ -49,7 +49,7 @@ def main(wordlist_size: str, url_path: str="/", target_ip: str=None, port: int=8
  
 	if check_backups:
 		extensions += "," if len(extensions) > 0 else ""
-		extensions += "bak,tar,tar.gz,tmp"
+		extensions += "bak,tar,tar.gz,tmp,old"
 
 	_gobust(url_path, wordlist_size, target_ip, port, use_ssl, extensions, output_dir)
 
