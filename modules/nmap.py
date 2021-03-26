@@ -43,7 +43,7 @@ def _udp_nmap_scan(target: str, output_dir: Path) -> None:
 
 def _scan(command, output_dir, filename):
 	if os.path.isdir(output_dir):
-		os.system(command + f"-oN {output_dir}/{filename}")
+		os.system(command + f" -oN {output_dir}/{filename}")
 		return
 
 	print(f"WARNING: Jarvis won't log this nmap scan. Please create {output_dir} to fix this.")
