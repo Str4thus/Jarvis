@@ -32,7 +32,7 @@ def main(mode: str, target: str=None, output_dir: str=None) -> None:
 
 
 def _default_nmap_scan(target: str, output_dir: str) -> None:
-	_scan(f"nmap -sC -sV -p- -vvv -A {target}", output_dir, "default.nmap")
+	_scan(f"nmap -sC -sV -p- -vvv -Pn -A {target}", output_dir, "default.nmap")
 
 def _fast_nmap_scan(target: str, output_dir: Path) -> None:
 	_scan(f"nmap -p- -vvv {target}", output_dir, "fast.nmap")
