@@ -8,11 +8,12 @@ from pathlib import Path
 from .config import get_config_value
 from .brain import init_session
 from argparse import ArgumentParser
+from modules.pwnbooks import pwnbooks_init
 
 
 def add_parser(sub_parsers: ArgumentParser) -> None:
 	join_parser = sub_parsers.add_parser("join")
-	join_parser.add_argument("lab", help="Kind of CTF", choices=get_config_value("configured_labs"))
+	join_parser.add_argument("lab_name", help="Kind of CTF", choices=get_config_value("configured_labs"))
 	join_parser.add_argument("box_name", help="Name of the box/working directory")
 	join_parser.add_argument("--release", help="Connects to the release arena on HTB", action="store_true", default=False)
 	join_parser.add_argument("--subdir", help="Subdirectory to create within the working directory (useful when a CTF consists of couple daily challenges)", dest="sub_dir", default=None)
@@ -22,31 +23,35 @@ def add_parser(sub_parsers: ArgumentParser) -> None:
 	join_parser.add_argument("-t", "--target", help="Specify the target's ip", default=None)
 	join_parser.add_argument("--lhost", help="Specify lhost value", default=None)
 	join_parser.add_argument("--lport", help="Specify lport value", type=int, default=31337)
+	join_parser.add_argument("--pwnbooks", help="Generate notes for this box", dest="shall_init_pwnbooks", action="store_true", default=False)
 
 
-def main(lab: str, box_name: str, release: bool=False, empty: bool=False, sub_dir: str=None, vpn_path: str=None, is_temp: bool=False,
-	target: str=None, lhost: str=None, lport: int=None) -> None:
-	if not (get_config_value(lab + "_vpn") or vpn_path) and not (get_config_value(lab + "_dir") or is_temp):
+def main(lab_name: str, box_name: str, release: bool=False, empty: bool=False, sub_dir: str=None, vpn_path: str=None, is_temp: bool=False,
+	target: str=None, lhost: str=None, lport: int=None, shall_init_pwnbooks: bool=False) -> None:
+	if not (get_config_value(lab_name + "_vpn") or vpn_path) and not (get_config_value(lab_name + "_dir") or is_temp):
 		print("Unrecognized lab! You can specify --vpn <vpn_path> and --tmp or add a new kind via 'jarvis.py labs add <lab_name>''")
 		exit(1)
 
 	if not vpn_path:
 		if release:
-			vpn_path = Path(get_config_value(lab + "_release_vpn"))
+			vpn_path = Path(get_config_value(lab_name + "_release_vpn"))
 		else:
-			vpn_path = Path(get_config_value(lab + "_vpn"))
+			vpn_path = Path(get_config_value(lab_name + "_vpn"))
 
 
 	if is_temp:
 		cwd = Path(tempfile.gettempdir()) / box_name
 	else:
-		cwd = Path(get_config_value(lab + "_dir")) / box_name
+		cwd = Path(get_config_value(lab_name + "_dir")) / box_name
 		if sub_dir:
 			cwd /= sub_dir
 
 
 	init_session(box_name=box_name, box_dir=cwd, vpn_path=vpn_path,
-		lab_name=lab, target=target, lhost=lhost, lport=lport)
+		lab_name=lab_name, target=target, lhost=lhost, lport=lport)
+	
+	if shall_init_pwnbooks:
+		pwnbooks_init(lab_name, box_name)
 
 	_create_cwd_if_not_exists(cwd, empty)
 	_setup_tmux(cwd, vpn_path)
