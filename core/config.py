@@ -7,7 +7,7 @@ from typing import Union, List
 _CONFIG_FILE = Path.home() / ".jarvis.conf"
 
 _DEFAULT_CONFIG = {
-	"pwnbooks_path": "", # Path to the pwnbooks package
+	"pwnbooks_path": "/pwnbooks", # Path to the pwnbooks package
 	"default_folders": ["nmap", "gobuster"], # Default folders for initialization
 	"configured_labs": []
 }
