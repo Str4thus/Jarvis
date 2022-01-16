@@ -19,7 +19,7 @@ if _BRAIN_FILE.is_file():
 
 def add_parser(sub_parsers: ArgumentParser) -> None:
 	brain_parser = sub_parsers.add_parser("brain")
-	brain_parser.add_argument("key", help="Brain Attribute", nargs="?", choices=["lhost", "lport", "target"], default=None)
+	brain_parser.add_argument("key", help="Brain Attribute", nargs="?", choices=["box_dir", "box_name", "vpn_path", "target"], default=None)
 	brain_parser.add_argument("value", help="Value for the attribute", nargs="?", default=None)
 
 def main(key: str=None, value: str=None) -> None:
@@ -37,7 +37,7 @@ def main(key: str=None, value: str=None) -> None:
 	else:
 		print("There is currently no active session!")
 
-def init_session(box_dir, box_name, vpn_path, lab_name, target=None, lhost=None, lport=None):
+def init_session(box_dir, box_name, vpn_path, lab_name, target=None):
 	if get_brain_value("active"):
 		print("A session is already active! Please exit it first before creating a new one!")
 		exit(1)
@@ -48,8 +48,6 @@ def init_session(box_dir, box_name, vpn_path, lab_name, target=None, lhost=None,
 	set_brain_value("vpn_path", str(vpn_path))
 	set_brain_value("lab_name", lab_name)
 	set_brain_value("target", target)
-	set_brain_value("lhost", lhost)
-	set_brain_value("lport", lport)
 
 
 def exit_session() -> None:
@@ -62,13 +60,12 @@ def exit_session() -> None:
 
 
 def set_brain_value(key: str, value) -> None:
+	if key == "box_dir" and key in _SESSION_DATA:
+		os.system(f"tmux command-prompt -I {value} 'attach -c %1'") # TODO can it please require NO user confirmation?
+
 	_SESSION_DATA[key] = value
 	_save()
 
-	if key == "target":
-		os.environ["target"] = value or ""
-	elif key == "box_dir":
-		os.environ["boxdir"] = value or ""
 
 def get_brain_value(key: str) -> Union[str, None]:
 		try:

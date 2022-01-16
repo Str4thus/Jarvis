@@ -5,10 +5,10 @@ import socket
 import fcntl
 import struct
 from pathlib import Path
-from .config import get_config_value
-from .brain import init_session
 from argparse import ArgumentParser
 from modules.pwnbooks import pwnbooks_init
+from .config import get_config_value
+from .brain import init_session
 
 
 def add_parser(sub_parsers: ArgumentParser) -> None:
@@ -21,15 +21,13 @@ def add_parser(sub_parsers: ArgumentParser) -> None:
 	join_parser.add_argument("--vpn", help="Specify a VPN to use", dest="vpn_path", default=None)
 	join_parser.add_argument("--tmp, --temp", help="Create the box directory in a temporary locaton", action="store_true", dest="is_temp", default=False)
 	join_parser.add_argument("-t", "--target", help="Specify the target's ip", default=None)
-	join_parser.add_argument("--lhost", help="Specify lhost value", default=None)
-	join_parser.add_argument("--lport", help="Specify lport value", type=int, default=31337)
 	join_parser.add_argument("--pwnbooks", help="Generate notes for this box", dest="shall_init_pwnbooks", action="store_true", default=False)
 
 
 def main(lab_name: str, box_name: str, release: bool=False, empty: bool=False, sub_dir: str=None, vpn_path: str=None, is_temp: bool=False,
-	target: str=None, lhost: str=None, lport: int=None, shall_init_pwnbooks: bool=False) -> None:
+	target: str=None, shall_init_pwnbooks: bool=False) -> None:
 	if not (get_config_value(lab_name + "_vpn") or vpn_path) and not (get_config_value(lab_name + "_dir") or is_temp):
-		print("Unrecognized lab! You can specify --vpn <vpn_path> and --tmp or add a new kind via 'jarvis.py labs add <lab_name>''")
+		print("Unrecognized lab! You can specify --vpn <vpn_path> and --tmp or add a new lab via 'jarvis.py labs add <lab_name>''")
 		exit(1)
 
 	if not vpn_path:
@@ -48,7 +46,7 @@ def main(lab_name: str, box_name: str, release: bool=False, empty: bool=False, s
 
 
 	init_session(box_name=box_name, box_dir=cwd, vpn_path=vpn_path,
-		lab_name=lab_name, target=target, lhost=lhost, lport=lport)
+		lab_name=lab_name, target=target)
 	
 	if shall_init_pwnbooks:
 		pwnbooks_init(lab_name, box_name)
@@ -57,19 +55,19 @@ def main(lab_name: str, box_name: str, release: bool=False, empty: bool=False, s
 	_setup_tmux(cwd, vpn_path)
 	_attach_to_tmux(cwd)
 
-def _create_cwd_if_not_exists(cwd: Path, shall_be_empty: bool) -> None:
+def _create_cwd_if_not_exists(cwd: Path, shall_be_empty: bool=False) -> None:
 	if not os.path.exists(cwd):
 		os.makedirs(cwd)
 
 		if not shall_be_empty:
 			for folder in get_config_value("default_folders"):
 				os.mkdir(cwd / folder)
-				
+
 
 def _setup_tmux(cwd: Path, vpn_path: Path) -> None:
 	os.system("tmux new-session -d -c {} -s Jarvis".format(cwd))
 	os.system("tmux send -t Jarvis:0 'openvpn {}' C-m".format(vpn_path))
-	time.sleep(0.1)
+	time.sleep(1) # Wait for VPN connection
 	os.system("tmux new-window -t Jarvis -c {}".format(cwd))
 
 def _attach_to_tmux(cwd: Path) -> None:
