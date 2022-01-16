@@ -52,7 +52,7 @@ def main(lab_name: str, box_name: str, release: bool=False, empty: bool=False, s
 		pwnbooks_init(lab_name, box_name)
 
 	_create_cwd_if_not_exists(cwd, empty)
-	_setup_tmux(cwd, vpn_path)
+	_setup_tmux(cwd, vpn_path, shall_init_pwnbooks)
 	_attach_to_tmux(cwd)
 
 def _create_cwd_if_not_exists(cwd: Path, shall_be_empty: bool=False) -> None:
@@ -64,11 +64,16 @@ def _create_cwd_if_not_exists(cwd: Path, shall_be_empty: bool=False) -> None:
 				os.mkdir(cwd / folder)
 
 
-def _setup_tmux(cwd: Path, vpn_path: Path) -> None:
-	os.system("tmux new-session -d -c {} -s Jarvis".format(cwd))
-	os.system("tmux send -t Jarvis:0 'openvpn {}' C-m".format(vpn_path))
+def _setup_tmux(cwd: Path, vpn_path: Path, shall_init_pwnbooks: bool=False) -> None:
+	os.system(f"tmux new-session -d -c {cwd} -s Jarvis")
+
+	if shall_init_pwnbooks:
+		os.system(f"tmux send -t Jarvis:0 'obsidian; openvpn {vpn_path}' C-m")
+	else:
+		os.system(f"tmux send -t Jarvis:0 'openvpn {vpn_path}' C-m")
+
 	time.sleep(1) # Wait for VPN connection
-	os.system("tmux new-window -t Jarvis -c {}".format(cwd))
+	os.system(f"tmux new-window -t Jarvis -c {cwd}")
 
 def _attach_to_tmux(cwd: Path) -> None:
-	os.system("tmux at -t Jarvis -c {}".format(cwd))
+	os.system(f"tmux at -t Jarvis -c {cwd}")

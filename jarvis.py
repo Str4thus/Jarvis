@@ -54,7 +54,7 @@ if __name__ == "__main__":
 		parser.print_help()
 		exit(1)
 	
-	#try:
-	_MODULE_DICT[subcommand](**subcommand_args)
-	#except TypeError:
-	#	print(f"Module '{subcommand}' does not accept additional arguments!")
+	try:
+		_MODULE_DICT[subcommand](**subcommand_args)
+	except TypeError:
+		print(f"Module '{subcommand}' does not accept additional arguments!")

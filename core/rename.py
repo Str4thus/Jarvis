@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from modules.pwnbooks import pwnbooks_rename
 from .brain import set_brain_value, get_brain_value
